@@ -41,10 +41,29 @@ def filter_stop_words(frequencies: dict, stop_words: tuple) -> dict:
     """
     Removes all stop words from the given frequencies dictionary
     """
+    if frequencies != None and stop_words == None:
+        print(frequencies, None)
+        return frequencies, None
+    elif frequencies == None and stop_words != None:
+        print(None, stop_words)
+        return None, stop_words
+    elif frequencies == None and stop_words == None:
+        print(None, None)
+        return None, None
+    shadow_dictionary = dict(frequencies)
+    for i in range(0, 10):
+        if i in shadow_dictionary:
+            del shadow_dictionary[i]
+    for i in range(len(stop_words)):
+        if stop_words[i] in shadow_dictionary:
+            del shadow_dictionary[stop_words[i]]
+    print(shadow_dictionary)
+    return shadow_dictionary
     pass
 
 def get_top_n(frequencies: dict, top_n: int) -> tuple:
     """
     Takes first N popular words
     """
+
     pass
