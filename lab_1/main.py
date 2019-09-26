@@ -8,7 +8,7 @@ def calculate_frequences(text: str) -> dict:
     """
     Calculates number of times each word appears in the text
     """
-    if text == None or '':
+    if text is None or text == '':
         print({})
         return {}
     elif isinstance(text, int):
@@ -41,15 +41,15 @@ def filter_stop_words(frequencies: dict, stop_words: tuple) -> dict:
     """
     Removes all stop words from the given frequencies dictionary
     """
-    if frequencies != None and stop_words == None:
-        print(frequencies, None)
-        return frequencies, None
-    elif frequencies == None and stop_words != None:
-        print(None, stop_words)
-        return None, stop_words
-    elif frequencies == None and stop_words == None:
-        print(None, None)
-        return None, None
+    if frequencies is not None and stop_words is None:
+        print(frequencies)
+        return frequencies
+    elif frequencies is None and stop_words is not None:
+        print({})
+        return {}
+    elif frequencies is None and stop_words is None:
+        print(None)
+        return {}
     shadow_dictionary = dict(frequencies)
     for i in range(0, 10):
         if i in shadow_dictionary:
@@ -65,17 +65,17 @@ def get_top_n(frequencies: dict, top_n: int) -> tuple:
     """
     Takes first N popular words
     """
-    if frequencies == None or frequencies == {}:
+    if frequencies is None or frequencies == {}:
         print(())
         return ()
-    final_tupele = ()
+    final_tuple = ()
     list_of_words = frequencies.keys()
     list_of_words = list(list_of_words)
     if top_n > len(frequencies):
         top_n = len(frequencies)
     for i in range(top_n):
-        final_tupele = final_tupele + (''.join(list_of_words[i]),)
-    print(final_tupele)
-    return final_tupele
+        final_tuple = final_tuple + (''.join(list_of_words[i]),)
+    print(final_tuple)
+    return final_tuple
     pass
 
