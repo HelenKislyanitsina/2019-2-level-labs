@@ -8,28 +8,22 @@ def calculate_frequences(text: str) -> dict:
     """
     Calculates number of times each word appears in the text
     """
+    if text == None or '':
+        print({})
+        return {}
+    elif isinstance(text, int):
+        print({})
+        return {}
     text_without_trash = ''
-    text = text.lower()
     for i in range(len(text)):
         if text[i].isalpha():
             text_without_trash += text[i]
         elif text[i] == ' ' or text[i] == '\n':
             text_without_trash += text[i]
-    a = 1
-    text_one_space = ''
-    text_without_trash += ' '
-    while a != 0:
-        a = 0
-        for i in range(len(text_without_trash) - 1):
-            if text_without_trash[i] == ' ' and text_without_trash[i + 1] == ' ':
-                text_one_space += text_without_trash[i]
-                text_one_space += text_without_trash[i + 1]
-                a += 1
-            elif i == len(text_without_trash) - 1:
-                text_one_space += text_without_trash[-1]
-            else:
-                text_one_space += text_without_trash[i]
-    list_of_words = text_one_space.split()
+        else:
+            text_without_trash += ' '
+    text_without_trash = text_without_trash.lower()
+    list_of_words = text_without_trash.split()
     words_dictionary = {}
     for i in range(len(list_of_words)):
         count = list_of_words.count(list_of_words[i])
