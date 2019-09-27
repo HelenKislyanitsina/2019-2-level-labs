@@ -29,7 +29,7 @@ def calculate_frequences(text: str) -> dict:
         count = list_of_words.count(list_of_words[i])
         words_dictionary[list_of_words[i]] = count
     sort_list = words_dictionary.items()
-    sort_list = sorted(sort_list, key=lambda i: i[1], reverse=True)
+    sort_list = sorted(sort_list, key=lambda a: a[1], reverse=True)
     final_dictionary = {}
     for i in range(len(sort_list)):
         final_dictionary[sort_list[i][0]] = sort_list[i][1]
