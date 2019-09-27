@@ -37,6 +37,7 @@ def calculate_frequences(text: str) -> dict:
     return final_dictionary
     pass
 
+
 def filter_stop_words(frequencies: dict, stop_words: tuple) -> dict:
     """
     Removes all stop words from the given frequencies dictionary
@@ -50,7 +51,7 @@ def filter_stop_words(frequencies: dict, stop_words: tuple) -> dict:
     elif frequencies is None and stop_words is None:
         print(None)
         return {}
-    shadow_dictionary = dict(frequencies)
+    shadow_dictionary = frequencies.copy()
     for i in range(0, 10):
         if i in shadow_dictionary:
             del shadow_dictionary[i]
@@ -60,6 +61,7 @@ def filter_stop_words(frequencies: dict, stop_words: tuple) -> dict:
     print(shadow_dictionary)
     return shadow_dictionary
     pass
+
 
 def get_top_n(frequencies: dict, top_n: int) -> tuple:
     """
