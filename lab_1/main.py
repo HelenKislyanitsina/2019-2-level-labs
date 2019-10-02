@@ -9,33 +9,29 @@ def calculate_frequences(text: str) -> dict:
     Calculates number of times each word appears in the text
     """
     if text is None or text == '':
-        print({})
         return {}
-    elif isinstance(text, int):
-        print({})
+    if isinstance(text, int):
         return {}
     text_without_trash = ''
-    for i in range(len(text)):
-        if text[i].isalpha():
-            text_without_trash += text[i]
-        elif text[i] == ' ' or text[i] == '\n':
-            text_without_trash += text[i]
+    for i in text:
+        if i.isalpha():
+            text_without_trash += i
+        elif i == ' ' or i == '\n':
+            text_without_trash += i
         else:
             text_without_trash += ' '
     text_without_trash = text_without_trash.lower()
     list_of_words = text_without_trash.split()
     words_dictionary = {}
-    for i in range(len(list_of_words)):
-        count = list_of_words.count(list_of_words[i])
-        words_dictionary[list_of_words[i]] = count
+    for i in list_of_words:
+        count = list_of_words.count(i)
+        words_dictionary[i] = count
     sort_list = words_dictionary.items()
     sort_list = sorted(sort_list, key=lambda a: a[1], reverse=True)
     final_dictionary = {}
-    for i in range(len(sort_list)):
-        final_dictionary[sort_list[i][0]] = sort_list[i][1]
-    print(final_dictionary)
+    for i in sort_list:
+        final_dictionary[i[0]] = i[1]
     return final_dictionary
-    pass
 
 
 def filter_stop_words(frequencies: dict, stop_words: tuple) -> dict:
@@ -43,24 +39,19 @@ def filter_stop_words(frequencies: dict, stop_words: tuple) -> dict:
     Removes all stop words from the given frequencies dictionary
     """
     if frequencies is not None and stop_words is None:
-        print(frequencies)
         return frequencies
-    elif frequencies is None and stop_words is not None:
-        print({})
+    if frequencies is None and stop_words is not None:
         return {}
-    elif frequencies is None and stop_words is None:
-        print(None)
+    if frequencies is None and stop_words is None:
         return {}
     shadow_dictionary = frequencies.copy()
     for i in range(0, 10):
         if i in shadow_dictionary:
             del shadow_dictionary[i]
-    for i in range(len(stop_words)):
-        if stop_words[i] in shadow_dictionary:
-            del shadow_dictionary[stop_words[i]]
-    print(shadow_dictionary)
+    for i in stop_words:
+        if i in shadow_dictionary:
+            del shadow_dictionary[i]
     return shadow_dictionary
-    pass
 
 
 def get_top_n(frequencies: dict, top_n: int) -> tuple:
@@ -68,7 +59,6 @@ def get_top_n(frequencies: dict, top_n: int) -> tuple:
     Takes first N popular words
     """
     if frequencies is None or frequencies == {}:
-        print(())
         return ()
     final_tuple = ()
     list_of_words = frequencies.keys()
@@ -77,6 +67,30 @@ def get_top_n(frequencies: dict, top_n: int) -> tuple:
         top_n = len(frequencies)
     for i in range(top_n):
         final_tuple = final_tuple + (''.join(list_of_words[i]),)
-    print(final_tuple)
     return final_tuple
-    pass
+
+
+def read_from_file(path_to_file: str, lines_limit: int) -> str:
+    if path_to_file is None or lines_limit is None:
+        return ''
+    text = open(path_to_file, 'r')
+    result = ''
+    for line in text:
+        if lines_limit == 0:
+            break
+        elif lines_limit > 0:
+            result += line
+            lines_limit -= 1
+    return result
+
+
+def write_to_file(path_to_file: str, content: tuple):
+    if path_to_file is None or content is None or isinstance(content, int):
+        return None
+    file = open(path_to_file, 'w')
+    for word in content:
+        file.write(word + '\n')
+    file.close()
+
+
+
