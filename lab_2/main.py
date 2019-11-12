@@ -12,11 +12,11 @@ def generate_edit_matrix(num_rows: int, num_columns: int) -> list:
 
 def initialize_edit_matrix(edit_matrix: tuple, add_weight: int, remove_weight: int) -> list:
     matrix = list(edit_matrix)
-    if matrix == []:
+    if not matrix:
         return matrix
     if not isinstance(add_weight, int) or not isinstance(remove_weight, int):
         return matrix
-    if matrix[0] == []:
+    if not matrix[0]:
         return matrix
     for i in range(1, len(matrix)):
         matrix[i][0] = matrix[i - 1][0] + remove_weight
@@ -38,7 +38,8 @@ def fill_edit_matrix(edit_matrix: tuple,
                      original_word: str,
                      target_word: str) -> list:
     matrix = list(edit_matrix)
-    if not isinstance(add_weight, int) or not isinstance(remove_weight, int) or not isinstance(substitute_weight, int) or not isinstance(original_word, str) or not isinstance(target_word, str):
+    if not isinstance(add_weight, int) or not isinstance(remove_weight, int) or not isinstance(substitute_weight, int) \
+            or not isinstance(original_word, str) or not isinstance(target_word, str):
         return matrix
     for i in range(1, len(matrix)):
         for l in range(1, len(matrix[i])):
@@ -57,7 +58,8 @@ def find_distance(original_word: str,
                   add_weight: int,
                   remove_weight: int,
                   substitute_weight: int) -> int:
-    if not isinstance(original_word, str) or not isinstance(target_word, str) or not isinstance(add_weight, int) or not isinstance(remove_weight, int) or not isinstance(substitute_weight, int):
+    if not isinstance(original_word, str) or not isinstance(target_word, str) or not isinstance(add_weight, int) or not\
+            isinstance(remove_weight, int) or not isinstance(substitute_weight, int):
         return -1
     first_step = tuple(generate_edit_matrix(len(original_word) + 1, len(target_word) + 1))
     second_step = tuple(initialize_edit_matrix(first_step, add_weight, remove_weight))
