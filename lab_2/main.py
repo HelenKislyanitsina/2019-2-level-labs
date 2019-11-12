@@ -6,7 +6,9 @@ Labour work #2. Levenshtein distance.
 def generate_edit_matrix(num_rows: int, num_columns: int) -> list:
     if not isinstance(num_rows, int) or not isinstance(num_columns, int):
         return []
-    matrix = [[0] * num_columns for i in range(num_rows)]
+    matrix = []
+    for i in range(num_rows):
+        matrix.append([0] * num_columns)
     return matrix
 
 
