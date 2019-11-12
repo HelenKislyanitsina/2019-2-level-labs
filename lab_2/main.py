@@ -9,6 +9,7 @@ def generate_edit_matrix(num_rows: int, num_columns: int) -> list:
     matrix = []
     for i in range(num_rows):
         matrix.append([0] * num_columns)
+        i += 1
     return matrix
 
 
@@ -44,14 +45,14 @@ def fill_edit_matrix(edit_matrix: tuple,
             or not isinstance(original_word, str) or not isinstance(target_word, str):
         return matrix
     for i in range(1, len(matrix)):
-        for l in range(1, len(matrix[i])):
-            add = matrix[i][l - 1] + add_weight
-            remove = matrix[i - 1][l] + remove_weight
-            if original_word[i - 1] == target_word[l - 1]:
-                substitute = matrix[i - 1][l - 1]
+        for k in range(1, len(matrix[i])):
+            add = matrix[i][k - 1] + add_weight
+            remove = matrix[i - 1][k] + remove_weight
+            if original_word[i - 1] == target_word[k - 1]:
+                substitute = matrix[i - 1][k - 1]
             else:
-                substitute = matrix[i - 1][l - 1] + substitute_weight
-            matrix[i][l] = minimum_value((add, remove, substitute))
+                substitute = matrix[i - 1][k - 1] + substitute_weight
+            matrix[i][k] = minimum_value((add, remove, substitute))
     return matrix
 
 
@@ -88,7 +89,7 @@ def load_from_csv(path_to_file: str) -> list:
     final_matrix = []
     for line in file:
         for i in line:
-            if i != ',' and i != '\n':
+            if i not in (',', '\n'):
                 matrix.append(i)
         final_matrix.append(matrix)
         matrix = []
