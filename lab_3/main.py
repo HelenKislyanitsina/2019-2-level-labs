@@ -39,6 +39,7 @@ class WordStorage:
         for word in corpus:
             if isinstance(word, str):
                 self.put(word)
+        return corpus
 
 
 class NGramTrie:
@@ -48,7 +49,7 @@ class NGramTrie:
         self.gram_log_probabilities = {}
 
     def fill_from_sentence(self, sentence: tuple) -> str:
-        ok = 'OK'
+        fine = 'OK'
         error = 'ERROR'
         gramm = []
         if not isinstance(sentence, tuple):
@@ -70,7 +71,7 @@ class NGramTrie:
                 self.gram_frequencies[gramm] = 1
         if not gramm:
             return error
-        return ok
+        return fine
 
     def calculate_log_probabilities(self):
         for gramm in self.gram_frequencies:
