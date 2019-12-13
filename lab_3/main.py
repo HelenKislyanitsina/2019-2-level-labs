@@ -13,6 +13,7 @@ if __name__ == '__main__':
 
 class WordStorage:
     def __init__(self):
+
         self.storage = {}
 
     def put(self, word: str) -> int:
@@ -23,120 +24,112 @@ class WordStorage:
         return -1
 
     def get_id_of(self, word: str) -> int:
-        if word in self.storage:
-            return self.storage[word]
+
+        if word in self.storage and isinstance(word, str):
+            id_word = self.storage.get(word)
+            return id_word
         return -1
 
-    def get_original_by(self, word_id: int) -> str:
-        if word_id in self.storage.values():
-            index = list(self.storage.values()).index(word_id)
-            return list(self.storage.keys())[index]
-        return 'UNK'
+    def get_original_by(self, id_number: int) -> str:
+
+        if id_number in self.storage.values():
+            id_word = list(self.storage.values()).index(id_number)
+            return list(self.storage.keys())[id_word]
+        return "UNK"
 
     def from_corpus(self, corpus: tuple):
-        if not isinstance(corpus, tuple):
-            return -1
-        for word in corpus:
-            if isinstance(word, str):
-                self.put(word)
-        return corpus
+
+        if corpus and isinstance(corpus, tuple):
+            corpus = set(corpus)
+            for element in corpus:
+                id_element = hash(element)
+                self.storage[element] = id_element
+        return self.storage
 
 
 class NGramTrie:
     def __init__(self, n):
+
         self.size = n
         self.gram_frequencies = {}
         self.gram_log_probabilities = {}
 
     def fill_from_sentence(self, sentence: tuple) -> str:
-        fine = 'OK'
-        error = 'ERROR'
-        gramm = []
-        if not isinstance(sentence, tuple):
-            return error
-        if sentence is None:
-            return error
-        if len(sentence) < self.size:
-            return error
-        for num, _ in enumerate(sentence[:-self.size + 1]):
-            gramm = []
-            i = 0
-            while i < self.size:
-                gramm.append(sentence[num + i])
-                i += 1
-            gramm = tuple(gramm)
-            if gramm in self.gram_frequencies:
-                self.gram_frequencies[gramm] += 1
-            else:
-                self.gram_frequencies[gramm] = 1
-        if not gramm:
-            return error
-        return fine
+
+        if sentence is not None and isinstance(sentence, tuple):
+            for i in range(len(sentence) - self.size + 1):
+                n_list = [sentence[i + j] for j in range(self.size)]
+                n_tuple = tuple(n_list)
+                if n_tuple in self.gram_frequencies.keys():
+                    self.gram_frequencies[n_tuple] += 1
+                else:
+                    self.gram_frequencies[n_tuple] = 1
+            return self.gram_frequencies
+        return []
 
     def calculate_log_probabilities(self):
-        for gramm in self.gram_frequencies:
-            summ = 0
-            for base_gramm in self.gram_frequencies:
-                if gramm[:-1] == base_gramm[:-1]:
-                    summ += self.gram_frequencies[base_gramm]
-            self.gram_log_probabilities[gramm] = math.log(self.gram_frequencies[gramm] / summ)
+        prob_dict = {}
+        for key, value in self.gram_frequencies.items():
+            if key[:self.size - 1] not in prob_dict:
+                prob_dict[key[:self.size - 1]] = value
+            else:
+                prob_dict[key[:self.size - 1]] += value
+        for key, value in self.gram_frequencies.items():
+            if key not in self.gram_log_probabilities:
+                probability = value / prob_dict[key[:self.size - 1]]
+                self.gram_log_probabilities[key] = math.log(probability)
+        return self.gram_log_probabilities
 
     def predict_next_sentence(self, prefix: tuple) -> list:
-        if not isinstance(prefix, tuple) or len(prefix) + 1 != self.size:
-            return []
-        sentence = list(prefix)
-        example = []
-        for gramm in self.gram_log_probabilities:
-            example.append(gramm[0: self.size - 1])
-        while prefix in example:
-            predict = []
-            for i, k in self.gram_log_probabilities.items():
-                if prefix == i[0: self.size - 1]:
-                    predict.append((k, i))
-            predict.sort(reverse=True)
-            affix = predict[0][1][-1]
-            sentence.append(affix)
-            prefix = predict[0][1][1:]
-        return sentence
+
+        next_sentence = []
+        list_prob_keys = []
+        list_prob_values = []
+        if prefix is not None and isinstance(prefix, tuple) and len(prefix) == self.size - 1:
+            next_sentence.extend(list(prefix[:self.size - 1]))
+            for _ in self.gram_log_probabilities:
+                if prefix[-1] not in next_sentence:
+                    next_sentence.append(prefix[-1])
+                for key in list(self.gram_log_probabilities.keys()):
+                    if prefix == key[:-1]:
+                        list_prob_keys.append(key)
+                        list_prob_values.append(self.gram_log_probabilities[key])
+                if list_prob_keys != [] and list_prob_values != []:
+                    key_prob = max(list_prob_values)
+                    prefix = list_prob_keys[list_prob_values.index(key_prob)][1:]
+                    list_prob_keys = []
+                    list_prob_values = []
+        return next_sentence
 
 
 def encode(storage_instance, corpus) -> list:
-    result = []
-    for num, sentence in enumerate(corpus):
-        result.append([])
+    for sentence in corpus:
         for word in sentence:
-            if isinstance(word, str):
-                result[num] += [storage_instance.get_id_of(word)]
-    return result
+            for key, value in storage_instance.items():
+                if word == key:
+                    sentence[sentence.index(word)] = value
+    return corpus
 
 
 def split_by_sentence(text: str) -> list:
-    if text is None:
-        return []
-    if not text:
-        return []
-    if ' ' not in text:
-        return []
-    signs_of_end = '.!?'
-    split_sentences = []
+    corpus = []
     new_text = ''
-    new_text_split = ''
-    if '\n' in text:
+    if isinstance(text, str) and ' ' in text:
         text = text.replace('\n', ' ')
-        text = text.replace('   ', ' ')
-        text = text.replace('  ', ' ')
-    for symbol in text:
-        if symbol.isalnum() or symbol == ' ':
-            before_symbol = text[text.index(symbol) - 2]
-            if symbol.isupper() and before_symbol in signs_of_end:
-                new_text += '#'
-                new_text += symbol.lower()
-            else:
-                new_text += symbol.lower()
-        new_text_split = new_text.split('#')
-    for sentence in new_text_split:
-        sentence = sentence.split()
-        sentence.insert(0, '<s>')
-        sentence.append('</s>')
-        split_sentences.append(sentence)
-    return split_sentences
+        while '  ' in text:
+            text = text.replace('  ', ' ')
+        text = text.replace('!', '.')
+        text = text.replace('?', '.')
+        if '.' in text:
+            for symbol in text:
+                if symbol.isalpha() or symbol == ' ' or symbol == '.':
+                    new_text += symbol.lower()
+    sentences = new_text.split('.')
+    while '' in sentences:
+        sentences.remove('')
+    for element in sentences:
+        element = element.split()
+        element.insert(0, '<s>')
+        element.append('</s>')
+        corpus.append(element)
+    return corpus
